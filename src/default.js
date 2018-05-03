@@ -3,6 +3,8 @@ import _     from 'lodash';
 import $     from 'jquery';
 import UIkit from 'uikit';
 
+window.UIkit = UIkit;
+
 OC = new Vue({
 	el  : "#oc",
 	name : "phoenix",
@@ -82,9 +84,6 @@ OC = new Vue({
 							this.$emit('phoenix:appsSetup')
 						}
 					})
-
-				}, (err) => {
-					this.warn(err);
 				});
 			});
 		},

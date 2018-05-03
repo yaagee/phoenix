@@ -18,7 +18,7 @@ clean: clean-core $(addprefix clean-app-,$(apps))
 .PHONY: core
 core:
 	npm install
-	node_modules/less/bin/lessc src/themes/owncloud.less core/css/uikit.owncloud.css --relative-urls
+	npm run compile-less
 	npm run build
 
 .PHONY: clean-core
@@ -42,4 +42,3 @@ clean-app-%:
 .PHONY: run
 run: build
 	php -S "$(SERVER_HOST)"
-
