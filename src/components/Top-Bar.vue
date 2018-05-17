@@ -28,7 +28,7 @@
 					<a href="#" @click="requestLogin"><i class="material-icons uk-margin-small-right uk-text-inverse">lock</i><span class="uk-text-inverse uk-visible@s">Login</span></a>
 				</li>
 				<li v-else>
-					<a href="#" :uk-tooltip="user.email"><i class="material-icons uk-margin-small-right uk-text-inverse">account_circle</i><span class="uk-text-inverse uk-visible@s">{{ user.displayname }}</span></a>
+					<a href="#" :uk-tooltip="userEmail"><i class="material-icons uk-margin-small-right uk-text-inverse">account_circle</i><span class="uk-text-inverse uk-visible@s">{{ userDisplayname }}</span></a>
 				</li>
 			</ul>
 		</div>
@@ -39,7 +39,6 @@
 import _ from 'lodash';
 
 export default {
-	props   : ['user'],
 	methods : {
 		requestLogin () {
 			this.$parent.$bus.emit('phoenix:request-login');
@@ -47,8 +46,14 @@ export default {
 	},
 	computed : {
 		isAnonymous () {
-			return _.isEmpty(this.user.displayname);
-		}
+			return !this.$store.getters.userIsEnabled;
+		},
+		userDisplayname () {
+			return this.$store.getters.userDisplayname;
+		},
+		userEmail () {
+			return this.$store.getters.userEmail;
+		},
 	}
 }
 </script>

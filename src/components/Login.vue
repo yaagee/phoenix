@@ -39,7 +39,7 @@ export default {
 			password: ''
 		};
 	},
-	props : ['user', 'servers'],
+	props : ['servers'],
 	mounted () {
 		this.$parent.$bus.on('phoenix:request-login', () => {
 			this._show();
@@ -64,12 +64,13 @@ export default {
 		login () {
 			this.loading = true;
 			let OC = this.$parent;
+
 			OC.$client.setInstance(this.instance);
 			OC.$client.login(this.username, this.password).then(status => {
 				OC.$client.users.getUser(this.username).then(user => {
 					this.loading = false;
 					this._hide();
-					OC.setUser(user);
+					OC.$store.commit('setUser', user);
 					OC.$bus.emit('phoenix:user-logged-in');
 					OC.$uikit.notification({
 						message: `Welcome  ${user.displayname}<br>We love you :-*`,
@@ -78,7 +79,6 @@ export default {
 				});
 			}).catch(error => {
 				this.loading = false;
-				console.log(error);
 				OC.$uikit.notification({
 					message: error,
 					status: 'danger',

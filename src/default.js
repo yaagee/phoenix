@@ -22,14 +22,20 @@ Vue.use(VueBus);
 
 import Helper from './mixins/helper.js';
 
+// --- Store ---
+
+// import Vuex from 'vuex';
+// Vue.use(Vuex);
+import Store from './store.js'
 
 // --- Adding global libraries ---
 
 import UIkit  from 'uikit';
 import Client from 'js-owncloud-client';
 
-Vue.prototype.$uikit  = UIkit
+Vue.prototype.$uikit  = UIkit;
 Vue.prototype.$client = new Client();
+Vue.prototype.$store  = Store;
 
 OC = new Vue({
 	el       : "#oc-scaffold",
@@ -50,12 +56,6 @@ OC = new Vue({
 		// models
 		nav     : [],
 		apps    : [],
-		user    : {
-			displayname : null,
-			email       : null,
-			enabled     : false,
-			home        : null
-		}
 	},
 
 	mounted () {
@@ -70,12 +70,9 @@ OC = new Vue({
 			this._bootApp(_.head(this.apps))
 		});
 
-		this.$bus.on('phoenix:user-logged-in', () => {
-			this.$client.getCapabilities().then(caps => {
-				this.server = caps
-			});
-		});
-
+		// setTimeout(() => {
+		// 	this.$store.commit('increment')
+		// }, 2000)
 	},
 
 	methods: {
@@ -181,48 +178,6 @@ OC = new Vue({
 			this.apps[index] = _.assignIn(app, payload);
 		},
 
-		// ----------------------------------------------------------- USERS ---
-
-		// setters
-
-		setUser (user) {
-			this.user = user;
-		},
-
-		// getters
-
-		getUser () {
-			return this.user
-		},
-
-		getUserDisplayname () {
-			return this.user.displayname;
-		},
-
-		getUserEmail () {
-			return this.user.email;
-		},
-
-		getUserQuota (formatted = false) {
-			if (!this.user.quota)
-				return null
-
-			if (!formatted)
-				return this.user.quota;
-
-			let form = {
-				free  : filesize(this.user.quota.free),
-				total : filesize(this.user.quota.total),
-				used  : filesize(this.user.quota.used)
-			};
-
-			return _.assignIn(this.user.quota, form);
-		},
-
-		userEnabled () {
-			return this.user.enabled;
-		},
-
 		// ---------------------------------------------------------- helper ---
 
 		getAppById( id ) {
@@ -238,8 +193,15 @@ OC = new Vue({
 		registerNavItem ( app, payload ) {
 			this.nav.push(_.assign( { app }, payload ));
 		},
-
 	},
+	computed : {
+		userDisplayname () {
+			return this.$store.getters.userDisplayname;
+		},
+		say () {
+			return this.$store.getters.getSay;
+		}
+	}
 })
 
 export default OC;
